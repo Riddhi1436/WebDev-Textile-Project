@@ -40,7 +40,9 @@ async function loadProducts() {
         
         container.innerHTML = products.map(product => `
             <div class="product-card">
-                <div class="product-image">📦</div>
+                <div class="product-image">
+                    ${product.image ? `<img src="${product.image}" alt="${product.name}">` : "📦"}
+                </div>
                 <div class="product-content">
                     <div class="product-name">${product.name}</div>
                     <div class="product-category">${product.category}</div>
@@ -73,12 +75,14 @@ async function submitProduct(event) {
     
     try {
         const product = {
-            name: document.getElementById("productName").value,
-            description: document.getElementById("productDesc").value,
+            name: document.getElementById("productName").value.trim(),
+            description: document.getElementById("productDesc").value.trim(),
             price: parseFloat(document.getElementById("productPrice").value),
-            category: document.getElementById("productCategory").value,
-            image: document.getElementById("productImage").value || ""
+            category: document.getElementById("productCategory").value.trim(),
+            imageUrl: document.getElementById("productImageUrl").value.trim() || ""
         };
+        const fileInput = document.getElementById("productImageFile");
+        const file = fileInput.files[0] || null;
         
         // Validate
         if (!product.name || !product.description || !product.price || !product.category) {
@@ -86,10 +90,11 @@ async function submitProduct(event) {
             return;
         }
         
-        await createProduct(product);
+        await createProduct(product, file);
         
         // Clear form
         event.target.reset();
+        document.getElementById("imagePreview").innerHTML = "Image preview will appear here.";
         toggleProductForm();
         
         showAlert("Product created successfully!", "success");
@@ -99,6 +104,24 @@ async function submitProduct(event) {
         console.error("Error creating product:", error);
         showAlert(error.message, "error");
     }
+}
+
+// Preview selected product image
+function previewProductImage() {
+    const preview = document.getElementById("imagePreview");
+    const fileInput = document.getElementById("productImageFile");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        preview.innerHTML = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        preview.innerHTML = `<img src="${event.target.result}" alt="Product preview">`;
+    };
+    reader.readAsDataURL(file);
 }
 
 // Delete product

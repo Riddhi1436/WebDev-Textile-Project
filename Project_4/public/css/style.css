@@ -168,6 +168,45 @@ header {
     font-family: inherit;
 }
 
+.file-label {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.8rem 1rem;
+    background: #667eea;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.file-label:hover {
+    background: #5568d3;
+}
+
+#productImageFile {
+    display: none;
+}
+
+.image-preview {
+    margin-top: 1rem;
+    min-height: 120px;
+    border: 1px dashed #ccc;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f7fafc;
+    color: #666;
+    text-align: center;
+    padding: 1rem;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 150px;
+    border-radius: 10px;
+}
+
 .form-container input:focus,
 .form-container textarea:focus {
     outline: none;

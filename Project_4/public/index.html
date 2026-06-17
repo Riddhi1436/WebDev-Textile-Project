@@ -38,12 +38,15 @@
             <!-- Product Form (Hidden by default) -->
             <div id="productForm" class="form-container" style="display: none;">
                 <h3>Add New Product</h3>
-                <form onsubmit="submitProduct(event)">
-                    <input type="text" id="productName" placeholder="Product Name" required>
-                    <textarea id="productDesc" placeholder="Description" required></textarea>
-                    <input type="number" id="productPrice" placeholder="Price" step="0.01" required>
-                    <input type="text" id="productCategory" placeholder="Category" required>
-                    <input type="text" id="productImage" placeholder="Image URL">
+                <form id="productUploadForm" onsubmit="submitProduct(event)">
+                    <input type="text" id="productName" name="name" placeholder="Product Name" required>
+                    <textarea id="productDesc" name="description" placeholder="Description" required></textarea>
+                    <input type="number" id="productPrice" name="price" placeholder="Price" step="0.01" required>
+                    <input type="text" id="productCategory" name="category" placeholder="Category" required>
+                    <input type="url" id="productImageUrl" name="imageUrl" placeholder="Image URL (optional)">
+                    <label class="file-label" for="productImageFile">Upload Image (optional)</label>
+                    <input type="file" id="productImageFile" name="image" accept="image/*" onchange="previewProductImage()">
+                    <div id="imagePreview" class="image-preview">Image preview will appear here.</div>
                     <button type="submit" class="btn btn-success">Submit</button>
                     <button type="button" class="btn btn-danger" onclick="toggleProductForm()">Cancel</button>
                 </form>

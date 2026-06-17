@@ -50,10 +50,29 @@ async function getProducts() {
 }
 
 // Create new product
-async function createProduct(product) {
+async function createProduct(product, file = null) {
     try {
-        const data = await apiCall("/products", "POST", product);
-        return data;
+        const formData = new FormData();
+        formData.append("name", product.name);
+        formData.append("description", product.description);
+        formData.append("price", product.price);
+        formData.append("category", product.category);
+        formData.append("imageUrl", product.imageUrl || "");
+        if (file) {
+            formData.append("image", file);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/products`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP Error: ${response.status}`);
+        }
+
+        return await response.json();
     } catch (error) {
         throw new Error("Failed to create product: " + error.message);
     }

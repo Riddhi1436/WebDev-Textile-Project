@@ -2,8 +2,26 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const axios = require("axios");
+const multer = require("multer");
+const fs = require("fs");
 
 const app = express();
+
+// Ensure upload directory exists
+const uploadDir = path.join(__dirname, "public", "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const timestamp = Date.now();
+    const safeName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, "_");
+    cb(null, `${timestamp}-${safeName}`);
+  }
+});
+const upload = multer({ storage });
 
 // Middleware
 app.use(cors());
@@ -89,9 +107,12 @@ app.get("/api/products", async (req, res) => {
 });
 
 // Create product (admin)
-app.post("/api/products", async (req, res) => {
+app.post("/api/products", upload.single("image"), async (req, res) => {
   try {
-    const { name, description, price, category, image } = req.body;
+    const { name, description, price, category, image, imageUrl } = req.body;
+    const fileUrl = req.file
+      ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+      : image || imageUrl || "";
 
     if (!name || !description || !price || !category) {
       return res.status(400).json({
@@ -105,7 +126,7 @@ app.post("/api/products", async (req, res) => {
       description,
       price,
       category,
-      image
+      image: fileUrl
     });
 
     res.status(201).json({
